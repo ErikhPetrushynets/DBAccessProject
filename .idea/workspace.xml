@@ -4,8 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="09cb29cf-e220-4f33-a85f-096ded7bcc44" name="Changes" comment="feat: Finished procedure call and insert tabs, added first version of try-catch + rollbacks!">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/lab_07/Doctor.java" afterDir="false" />
+    <list default="true" id="09cb29cf-e220-4f33-a85f-096ded7bcc44" name="Changes" comment="feat: Finished select tab.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/lab_07/LabController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/lab_07/LabController.java" afterDir="false" />
     </list>
@@ -107,7 +106,8 @@
       <workItem from="1700918407796" duration="100000" />
       <workItem from="1700918703492" duration="4577000" />
       <workItem from="1700925953458" duration="285000" />
-      <workItem from="1700926278764" duration="2903000" />
+      <workItem from="1700926278764" duration="3522000" />
+      <workItem from="1700932817057" duration="30919000" />
     </task>
     <task id="LOCAL-00001" summary="feat: Created first version of procedure call!">
       <option name="closed" value="true" />
@@ -125,7 +125,15 @@
       <option name="project" value="LOCAL" />
       <updated>1700923171075</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="feat: Finished select tab.">
+      <option name="closed" value="true" />
+      <created>1700929466831</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1700929466831</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -145,6 +153,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="feat: Created first version of procedure call!" />
     <MESSAGE value="feat: Finished procedure call and insert tabs, added first version of try-catch + rollbacks!" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: Finished procedure call and insert tabs, added first version of try-catch + rollbacks!" />
+    <MESSAGE value="feat: Finished select tab." />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: Finished select tab." />
   </component>
 </project>

@@ -1,5 +1,6 @@
 package com.example.lab_07;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -7,9 +8,16 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 import javax.print.Doc;
+import javax.xml.datatype.DatatypeConfigurationException;
 import java.sql.*;
+import java.time.DateTimeException;
+import java.time.Duration;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.zip.DataFormatException;
 
 
 public class LabController {
@@ -45,8 +53,15 @@ public class LabController {
     @FXML
     public TableColumn<Diagnose, String> insertICD10Column;
     public DbManager dbmanager;
-    public LabController(){
+    public DbManager dbmanager1;
+    public DbManager dbmanager2;
+    public DbManager dbmanager3;
+    public LabController()
+    {
         dbmanager = new DbManager();
+        dbmanager1 = new DbManager();
+        dbmanager2 = new DbManager();
+        dbmanager3 = new DbManager();
     }
 
     //SELECT FIELDS
@@ -60,6 +75,16 @@ public class LabController {
     public TableColumn<Doctor, String> selectPhoneNumber;
     public TableColumn<Doctor, String> selectExperience;
 
+    //CONFLICT FIELDS
+
+    @FXML
+    public TextField conflictFirstSelect;
+    @FXML
+    public TextField conflictSecondSelect;
+    @FXML
+    public TextField conflictTransactionSelect;
+    @FXML
+    public TextField conflictActualSelect;
     @FXML
     public void onGetTimeButtonClick() throws SQLException {
         try {
@@ -92,7 +117,6 @@ public class LabController {
         alert.setHeaderText(null);
         alert.setContentText(e.getMessage());
         alert.showAndWait();
-
         // Rollback the transaction in case of an error
         try {
             dbmanager.connection.rollback();
@@ -101,25 +125,32 @@ public class LabController {
             rollbackAlert.setTitle(rollbackException.getSQLState());
             rollbackAlert.setHeaderText(null);
             rollbackAlert.setContentText(rollbackException.getMessage());
-            rollbackAlert.showAndWait();            }
-    } catch (Exception e){
+            rollbackAlert.showAndWait();
+        }
+    } catch (NumberFormatException e){
         Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(e.getMessage());
+        alert.setTitle("Please input NUMBER into Doctor ID!");
         alert.setHeaderText(null);
         alert.setContentText(e.getMessage());
-
         alert.showAndWait();
-
-    } finally{
-        try {
-            dbmanager.connection.setAutoCommit(true);
-        } catch (SQLException autoCommitException) {
-            Alert rollbackAlert = new Alert(Alert.AlertType.ERROR);
-            rollbackAlert.setTitle(autoCommitException.getSQLState());
-            rollbackAlert.setHeaderText(null);
-            rollbackAlert.setContentText(autoCommitException.getMessage());
-            rollbackAlert.showAndWait();        }
-    }
+    }catch (DateTimeException | NullPointerException e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Please input correct DATE!");
+            alert.setHeaderText(null);
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
+        }
+        finally{
+            try {
+                dbmanager.connection.setAutoCommit(true);
+            } catch (SQLException autoCommitException) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle(autoCommitException.getSQLState());
+            alert.setHeaderText(null);
+            alert.setContentText(autoCommitException.getMessage());
+            alert.showAndWait();
+            }
+        }
     }
     @FXML
     public void onAddDiagnoseClick() {
@@ -179,7 +210,6 @@ public class LabController {
             alert.setHeaderText(null);
             alert.setContentText(e.getMessage());
             alert.showAndWait();
-
             // Rollback the transaction in case of an error
             try {
                 dbmanager.connection.rollback();
@@ -188,25 +218,30 @@ public class LabController {
                 rollbackAlert.setTitle(rollbackException.getSQLState());
                 rollbackAlert.setHeaderText(null);
                 rollbackAlert.setContentText(rollbackException.getMessage());
-                rollbackAlert.showAndWait();            }
-        }
-        catch (Exception e){
+                rollbackAlert.showAndWait();
+            }
+        } catch (NumberFormatException e){
             Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle(e.getMessage());
+            alert.setTitle("Please input NUMBER into ID fields!");
             alert.setHeaderText(null);
             alert.setContentText(e.getMessage());
             alert.showAndWait();
-
-        } finally{
-            // Set auto-commit back to true to enable auto-commit mode for subsequent operations
+        }catch (DateTimeException | NullPointerException e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Please input correct DATE!");
+            alert.setHeaderText(null);
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
+        }
+        finally{
             try {
                 dbmanager.connection.setAutoCommit(true);
             } catch (SQLException autoCommitException) {
-                Alert rollbackAlert = new Alert(Alert.AlertType.ERROR);
-                rollbackAlert.setTitle(autoCommitException.getSQLState());
-                rollbackAlert.setHeaderText(null);
-                rollbackAlert.setContentText(autoCommitException.getMessage());
-                rollbackAlert.showAndWait();
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle(autoCommitException.getSQLState());
+                alert.setHeaderText(null);
+                alert.setContentText(autoCommitException.getMessage());
+                alert.showAndWait();
             }
         }
     }
@@ -285,7 +320,208 @@ public class LabController {
             }
         }
     }
+    public void setTransactionIsolationHigh() throws SQLException {
+        dbmanager1.connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+        dbmanager2.connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+    }
+    public void setTransactionIsolationLow() throws SQLException {
+        dbmanager1.connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+        dbmanager2.connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+    }
+    public void doPhantom() throws SQLException {
+        dbmanager1.connection.setAutoCommit(false);
+        dbmanager2.connection.setAutoCommit(false);
+        try {
+            String selectSumOfEquipment1_1 = "SELECT sum(cost) as cost_sum from equipments WHERE condition = 'Operational'::equipment_condition_type";
+            CallableStatement cs1 = dbmanager1.connection.prepareCall(selectSumOfEquipment1_1);
+            boolean hasResults1 = cs1.execute();;
+            if(hasResults1){
+                ResultSet rs1 = cs1.getResultSet();
+                if (rs1.next()) {
+                    String costSum = rs1.getString("cost_sum");
+                    conflictFirstSelect.setText(costSum);
+                }
+                rs1.close();
+            }
 
+            String insertEquipment2_1 = "insert into equipments (room_id, name, condition, cost) values (1, 'X-ray', 'Operational'::equipment_condition_type, 24000)";
+            dbmanager2.connection.prepareCall(insertEquipment2_1).execute();
+
+            try{
+                dbmanager2.connection.commit();
+            }
+            catch (SQLException e){
+                Platform.runLater(() -> showErrorAlert(e));
+                try {
+                    dbmanager2.connection.rollback();
+                } catch (SQLException ex) {
+                    Platform.runLater(() -> showErrorAlert(ex));
+                }
+            }
+
+            String selectSumOfEquipment1_2 = "SELECT sum(cost) as cost_sum from equipments WHERE condition = 'Operational'::equipment_condition_type";
+            CallableStatement cs2 = dbmanager1.connection.prepareCall(selectSumOfEquipment1_2);
+
+            boolean hasResults2 = cs2.execute();;
+            if(hasResults2){
+                ResultSet rs2 = cs2.getResultSet();
+                if (rs2.next()) {
+                    String costSum = rs2.getString("cost_sum");
+                    conflictSecondSelect.setText(costSum);
+                }
+                rs2.close();
+            }
+            try{
+                dbmanager1.connection.commit();
+            }
+            catch (SQLException e){
+                Platform.runLater(() -> showErrorAlert(e));
+                try {
+                    dbmanager1.connection.rollback();
+
+                } catch (SQLException ex) {
+                    Platform.runLater(() -> showErrorAlert(ex));
+                }
+            }
+
+        } catch (SQLException e) {
+            Platform.runLater(() -> showErrorAlert(e));
+        }
+
+    }
+    public void callConflict() throws SQLException {
+       this.setTransactionIsolationLow();
+       this.doPhantom();
+    }
+    public void callResolvedConflict() throws SQLException {
+        this.setTransactionIsolationHigh();
+        this.doPhantom();
+    }
+    public void doSerializationAnomaly() throws SQLException {
+        dbmanager1.connection.setAutoCommit(false);
+        dbmanager2.connection.setAutoCommit(false);
+        dbmanager3.connection.setAutoCommit(false);
+
+        String selectSumOfEquipment = "SELECT sum(cost) as cost_sum from equipments WHERE condition = 'Maintenance needed'::equipment_condition_type";
+        CallableStatement cs3 = dbmanager3.connection.prepareCall(selectSumOfEquipment);
+
+        try {
+            String selectSumOfEquipment1_1 = "SELECT sum(cost) from equipments WHERE condition = 'Operational'::equipment_condition_type";
+            dbmanager1.connection.prepareCall(selectSumOfEquipment1_1).execute();
+
+            String selectSumOfEquipment2_1 = "SELECT sum(cost) as cost_sum from equipments WHERE condition = 'Maintenance needed'::equipment_condition_type";
+            CallableStatement cs2 = dbmanager2.connection.prepareCall(selectSumOfEquipment2_1);
+            boolean hasResults2 = cs2.execute();
+
+            if(hasResults2){
+                ResultSet rs2 = cs2.getResultSet();
+                if (rs2.next()) {
+                    String costSum = rs2.getString("cost_sum");
+                    conflictTransactionSelect.setText(costSum);
+                }
+                rs2.close();
+            }
+
+            String insertEquipment1_2 = "insert into equipments (room_id, name, condition, cost) values (1, 'X-ray', 'Maintenance needed'::equipment_condition_type, 24000)";
+            dbmanager1.connection.prepareCall(insertEquipment1_2).execute();
+
+            String insertEquipment2_2 = "insert into equipments (room_id, name, condition, cost) values (1, 'X-ray', 'Operational'::equipment_condition_type, 24000)";
+            dbmanager2.connection.prepareCall(insertEquipment2_2).execute();
+            try{
+                dbmanager1.connection.commit();
+            }
+            catch (SQLException e){
+                Platform.runLater(() -> showErrorAlert(e));
+                try {
+                    dbmanager1.connection.rollback();
+                    Thread.sleep(1000);
+                    dbmanager1.connection.prepareCall(selectSumOfEquipment1_1).execute();
+                    dbmanager1.connection.prepareCall(insertEquipment1_2).execute();
+                    try {
+                        dbmanager1.connection.commit();
+                    } catch (SQLException exp) {
+                        Platform.runLater(() -> showErrorAlert(exp));
+                        dbmanager1.connection.rollback();
+
+                    }
+                } catch (SQLException ex) {
+                    Platform.runLater(() -> showErrorAlert(ex));
+                } catch (InterruptedException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+            try{
+                boolean hasResults3 = cs3.execute();
+                if(hasResults3){
+                    ResultSet rs3 = cs3.getResultSet();
+                    if (rs3.next()) {
+                        String costSum = rs3.getString("cost_sum");
+                        conflictActualSelect.setText(costSum);
+                    }
+                    rs3.close();
+                }
+                dbmanager2.connection.commit();
+            }
+            catch (SQLException e){
+                Platform.runLater(() -> showErrorAlert(e));
+                try {
+                    dbmanager2.connection.rollback();
+                    Thread.sleep(1000);
+                    CallableStatement cs2_1 = dbmanager2.connection.prepareCall(selectSumOfEquipment2_1);
+                    boolean hasResults2_1 = cs2_1.execute();
+                    if(hasResults2_1){
+                        ResultSet rs2_1 = cs2_1.getResultSet();
+                        if (rs2_1.next()) {
+                            String costSum = rs2_1.getString("cost_sum");
+                            conflictTransactionSelect.setText(costSum);
+                        }
+                        rs2_1.close();
+                    }
+                    dbmanager2.connection.prepareCall(insertEquipment2_2).execute();
+                    try {
+                        boolean hasResults3 = cs3.execute();
+                        if(hasResults3){
+                            ResultSet rs3 = cs3.getResultSet();
+                            if (rs3.next()) {
+                                String costSum = rs3.getString("cost_sum");
+                                conflictActualSelect.setText(costSum);
+                            }
+                            rs3.close();
+                        }
+                        dbmanager2.connection.commit();
+                    } catch (SQLException exp) {
+                        dbmanager2.connection.rollback();
+                        Platform.runLater(() -> showErrorAlert(exp));
+                    }
+                } catch (InterruptedException ex) {
+                    throw new RuntimeException(ex);
+                }
+                catch (SQLException exception) {
+                    Platform.runLater(() -> showErrorAlert(e));
+                }
+            }
+        } catch (SQLException e) {
+            Platform.runLater(() -> showErrorAlert(e));
+        }
+    }
+    @FXML
+    public void callConflict2() throws SQLException {
+        this.setTransactionIsolationLow();
+        this.doSerializationAnomaly();
+
+    }
+    @FXML
+    public void callResolvedConflict2() throws SQLException {
+        this.setTransactionIsolationHigh();
+        this.doSerializationAnomaly();
+    }
+    private void showErrorAlert(SQLException exception) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(exception.getSQLState());
+        alert.setHeaderText(null);
+        alert.setContentText(exception.getMessage());
+        alert.showAndWait();
+    }
     @FXML
     public void initialize(){
         timeColumn.setCellValueFactory(new PropertyValueFactory<Time, String>("time"));
@@ -296,7 +532,7 @@ public class LabController {
         selectFullName.setCellValueFactory(new PropertyValueFactory<Doctor, String>("full_name"));
         selectPhoneNumber.setCellValueFactory(new PropertyValueFactory<Doctor, String>("phone_number"));
         selectExperience.setCellValueFactory(new PropertyValueFactory<Doctor, String>("experience"));
-
     }
-
 }
+
+
