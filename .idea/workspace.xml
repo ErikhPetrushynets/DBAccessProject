@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="09cb29cf-e220-4f33-a85f-096ded7bcc44" name="Changes" comment="feat: Finished select tab.">
+    <list default="true" id="09cb29cf-e220-4f33-a85f-096ded7bcc44" name="Changes" comment="feat: Added functions and additional buttons for anomalies.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/lab_07/LabController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/lab_07/LabController.java" afterDir="false" />
     </list>
@@ -22,6 +22,20 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "ErikhPetrushynets"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings">
+    <option name="selectedUrlAndAccountId">
+      <UrlAndAccount>
+        <option name="accountId" value="b0f4f9f4-5f27-48dc-a670-297329a7134e" />
+        <option name="url" value="https://github.com/ErikhPetrushynets/Lab_07.git" />
+      </UrlAndAccount>
+    </option>
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 7
@@ -107,7 +121,7 @@
       <workItem from="1700918703492" duration="4577000" />
       <workItem from="1700925953458" duration="285000" />
       <workItem from="1700926278764" duration="3522000" />
-      <workItem from="1700932817057" duration="30919000" />
+      <workItem from="1700932817057" duration="34430000" />
     </task>
     <task id="LOCAL-00001" summary="feat: Created first version of procedure call!">
       <option name="closed" value="true" />
@@ -133,7 +147,15 @@
       <option name="project" value="LOCAL" />
       <updated>1700929466831</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="feat: Added functions and additional buttons for anomalies.">
+      <option name="closed" value="true" />
+      <created>1701094865803</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1701094865803</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -154,6 +176,7 @@
     <MESSAGE value="feat: Created first version of procedure call!" />
     <MESSAGE value="feat: Finished procedure call and insert tabs, added first version of try-catch + rollbacks!" />
     <MESSAGE value="feat: Finished select tab." />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: Finished select tab." />
+    <MESSAGE value="feat: Added functions and additional buttons for anomalies." />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: Added functions and additional buttons for anomalies." />
   </component>
 </project>

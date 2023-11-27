@@ -170,7 +170,7 @@ public class LabController {
             }
 
             // Retrieve doctor diagnoses
-            String getDoctorDiagnoses = "SELECT patient_id, name, made_date, icd10_code FROM diagnoses WHERE doctor_id = ? ORDER BY made_date LIMIT 10";
+            String getDoctorDiagnoses = "SELECT patient_id, name, made_date, icd10_code FROM diagnoses WHERE doctor_id = ? ORDER BY diagnose_id desc LIMIT 10";
             try (CallableStatement callableStatement2 = dbmanager.connection.prepareCall(getDoctorDiagnoses)) {
                 callableStatement2.setInt(1, Integer.parseInt(insertDoctorIdInput.getText()));
                 boolean hasResults = callableStatement2.execute();
@@ -332,8 +332,8 @@ public class LabController {
         dbmanager1.connection.setAutoCommit(false);
         dbmanager2.connection.setAutoCommit(false);
         try {
-            String selectSumOfEquipment1_1 = "SELECT sum(cost) as cost_sum from equipments WHERE condition = 'Operational'::equipment_condition_type";
-            CallableStatement cs1 = dbmanager1.connection.prepareCall(selectSumOfEquipment1_1);
+            String selectCountOfEquipment1_1 = "SELECT count(*) as cost_sum from equipments WHERE condition = 'Operational'::equipment_condition_type";
+            CallableStatement cs1 = dbmanager1.connection.prepareCall(selectCountOfEquipment1_1);
             boolean hasResults1 = cs1.execute();;
             if(hasResults1){
                 ResultSet rs1 = cs1.getResultSet();
@@ -359,8 +359,8 @@ public class LabController {
                 }
             }
 
-            String selectSumOfEquipment1_2 = "SELECT sum(cost) as cost_sum from equipments WHERE condition = 'Operational'::equipment_condition_type";
-            CallableStatement cs2 = dbmanager1.connection.prepareCall(selectSumOfEquipment1_2);
+            String selectCountOfEquipment1_2 = "SELECT count(*) as cost_sum from equipments WHERE condition = 'Operational'::equipment_condition_type";
+            CallableStatement cs2 = dbmanager1.connection.prepareCall(selectCountOfEquipment1_2);
 
             boolean hasResults2 = cs2.execute();;
             if(hasResults2){
